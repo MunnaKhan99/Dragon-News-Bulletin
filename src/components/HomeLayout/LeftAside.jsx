@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import Category from '../Category';
+import Loading from '../../pages/Loading';
 
 const LeftAside = () => {
     return (

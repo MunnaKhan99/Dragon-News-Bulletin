@@ -1,19 +1,40 @@
-import React, { useState } from "react";
-import { Link } from "react-router";
+import { use } from "react";
+import { Link, useNavigate } from "react-router";
+import { AuthContext } from "../provider/AuthProvider";
 
 const Register = () => {
-
-    const [name, setName] = useState("");
-    const [photoUrl, setPhotoUrl] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [terms, setTerms] = useState(false);
-
-    console.log(name, photoUrl, email, password, terms);
-
+    const navigate = useNavigate();
+    const { createUser, setUser, updateUser } = use(AuthContext)
 
     const handleRegister = (e) => {
         e.preventDefault();
+        // console.log(e.target)
+        const form = e.target;
+        const name = form.name.value;
+        const photoUrl = form.photoUrl.value
+        const email = form.email.value
+        const password = form.password.value
+
+        // console.log({ name, photoUrl, email, password });
+        createUser(email, password)
+            .then(result => {
+                const user = result.user;
+                updateUser({ displayName: name, photoUrl: photoUrl })
+                    .then(() => {
+                        setUser({ ...user, displayName: name, photoUrl: photoUrl });
+                        navigate("/")
+                    }).catch((error) => {
+                        console.log(error);
+                        setUser(user);
+                    });
+
+
+                // console.log(result.user);
+            })
+            .catch(error => {
+                // console.log(error.message);
+                alert(error.message);
+            })
     }
     return (
         <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -29,7 +50,7 @@ const Register = () => {
 
                 {/* Form */}
                 <form
-                    onClick={handleRegister}
+                    onSubmit={handleRegister}
                     className="space-y-4" >
 
                     {/* Name */}
@@ -41,10 +62,8 @@ const Register = () => {
                             type="text"
                             placeholder="Enter your name"
                             className="input input-bordered w-full bg-base-200"
-                            name="name"
-                            value={name}
                             required
-                            onChange={(e) => setName(e.target.value)}
+                            name="name"
                         />
                     </div>
 
@@ -57,10 +76,8 @@ const Register = () => {
                             type="text"
                             placeholder="Enter your photo URL"
                             className="input input-bordered w-full bg-base-200"
-                            name="photoUrl"
-                            value={photoUrl}
                             required
-                            onChange={(e) => setPhotoUrl(e.target.value)}
+                            name="photoUrl"
                         />
                     </div>
 
@@ -73,10 +90,8 @@ const Register = () => {
                             type="email"
                             placeholder="Enter your email address"
                             className="input input-bordered w-full bg-base-200"
-                            name="email"
-                            value={email}
                             required
-                            onChange={(e) => setEmail(e.target.value)}
+                            name="email"
                         />
                     </div>
 
@@ -89,26 +104,9 @@ const Register = () => {
                             type="password"
                             placeholder="Enter your password"
                             className="input input-bordered w-full bg-base-200"
+                            required
                             name="password"
-                            value={password}
-                            required
-                            onChange={(e) => setPassword(e.target.value)}
                         />
-                    </div>
-
-                    {/* Terms */}
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            className="checkbox checkbox-sm"
-                            name="terms"
-                            // value={terms}
-                            required
-                            onChange={() => setTerms(!terms)}
-                        />
-                        <span className="text-sm">
-                            Accept Term & Conditions
-                        </span>
                     </div>
 
                     {/* Register Button */}

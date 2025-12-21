@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaStar, FaEye, FaBookmark, FaShareAlt } from "react-icons/fa";
+import { Link } from 'react-router';
+
 const NewsCard = ({ news }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
     const PREVIEW_LENGTH = 180;
 
-
     const {
+        id,
         title,
         thumbnail_url,
         total_view,
@@ -15,12 +16,15 @@ const NewsCard = ({ news }) => {
         details
     } = news;
 
-    const displayedText = isExpanded ? details : details.slice(0, PREVIEW_LENGTH) + "....";
+    const displayedText =
+        details.length > PREVIEW_LENGTH
+            ? details.slice(0, PREVIEW_LENGTH) + "..."
+            : details;
 
     return (
         <div className="bg-base-100 rounded-xl shadow-md p-4 space-y-4 mb-5 border border-base-300">
 
-            {/* Author Section */}
+            {/* Author */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <img
@@ -37,13 +41,13 @@ const NewsCard = ({ news }) => {
                 </div>
 
                 <div className="flex gap-3 text-gray-500">
-                    <FaBookmark className="cursor-pointer" />
-                    <FaShareAlt className="cursor-pointer" />
+                    <FaBookmark />
+                    <FaShareAlt />
                 </div>
             </div>
 
             {/* Title */}
-            <h2 className="text-lg font-bold text-primary leading-snug">
+            <h2 className="text-lg font-bold text-primary">
                 {title}
             </h2>
 
@@ -54,28 +58,24 @@ const NewsCard = ({ news }) => {
                 className="w-full h-52 object-cover rounded-lg"
             />
 
-            {/* details */}
-            <div>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                    {displayedText}
-                </p>
+            {/* Details preview */}
+            <p className="text-sm text-gray-600">
+                {displayedText}
+            </p>
 
-                {details.length > PREVIEW_LENGTH && (
-                    <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="mt-2 text-sm  font-semibold text-orange-500"
-                    >
-                        {isExpanded ? "Read Less" : "Read More"}
-                    </button>
-                )}
-            </div>
-            {/* Divider */}
-            <hr className="border-gray-200" />
+            {details.length > PREVIEW_LENGTH && (
+                <Link
+                    to={`/news-details/${id}`}
+                    className="text-sm font-semibold text-orange-500"
+                >
+                    Read More
+                </Link>
+            )}
+
+            <hr />
 
             {/* Footer */}
-            <div className="flex items-center justify-between">
-
-                {/* Rating */}
+            <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1 text-orange-500">
                     {[...Array(rating.number)].map((_, i) => (
                         <FaStar key={i} />
@@ -91,14 +91,12 @@ const NewsCard = ({ news }) => {
                     )}
                 </div>
 
-                {/* Views */}
-                <div className="flex items-center gap-1 text-gray-500 text-sm">
+                <div className="flex items-center gap-1 text-gray-500">
                     <FaEye />
                     <span>{total_view}</span>
                 </div>
             </div>
-        </div >
-
+        </div>
     );
 };
 

@@ -1,10 +1,9 @@
 import React, { use } from 'react';
 import { NavLink } from 'react-router';
 const categoryPromise = fetch("/categories.json").then(res => res.json());
-console.log(categoryPromise);
 const Category = () => {
     const categories = use(categoryPromise);
-    console.log(categories);
+    // console.log(categories);
     return (
         <div className=' h-fit sticky top-2'>
             <h3>All Category</h3>

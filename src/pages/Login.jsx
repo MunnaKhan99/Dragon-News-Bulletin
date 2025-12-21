@@ -1,7 +1,34 @@
-import React from "react";
-import { Link } from "react-router";
+import React, { use, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
+import { AuthContext } from "../provider/AuthProvider";
 
 const Login = () => {
+    const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
+    const { loginUser } = use(AuthContext);
+
+
+    const location = useLocation();
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+
+        // console.log({ email, password });
+
+        loginUser(email, password)
+            .then((result) => {
+                const user = result.user;
+                // console.log(user);
+                alert("Successfully login");
+                navigate(`${location.state ? location.state : "/"}`)
+            })
+            .catch((error) => {
+                setErrorMessage(error.message);
+            })
+    }
     return (
         <div className="min-h-screen flex items-center justify-center bg-base-200">
             <div className="w-full max-w-md bg-base-100 p-8 rounded-xl shadow">
@@ -15,7 +42,9 @@ const Login = () => {
                 <hr className="mb-6 border-gray-200" />
 
                 {/* Form */}
-                <form className="space-y-4">
+                <form className="space-y-4"
+                    onSubmit={handleLogin}
+                >
 
                     {/* Email */}
                     <div>
@@ -26,6 +55,8 @@ const Login = () => {
                             type="email"
                             placeholder="Enter your email address"
                             className="input input-bordered w-full bg-base-200"
+                            name="email"
+                            required
                         />
                     </div>
 
@@ -38,6 +69,8 @@ const Login = () => {
                             type="password"
                             placeholder="Enter your password"
                             className="input input-bordered w-full bg-base-200"
+                            name="password"
+                            required
                         />
                     </div>
 
@@ -48,6 +81,10 @@ const Login = () => {
                     >
                         Login
                     </button>
+
+                    {
+                        errorMessage && <p className="text-red-400 text-xs">{errorMessage}</p>
+                    }
                 </form>
 
                 {/* Footer */}
